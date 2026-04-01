@@ -1,3 +1,4 @@
+//TODO: test tagging and permissions structure
 import * as pulumi from "@pulumi/pulumi";
 import * as pulumiservice from "@pulumi/pulumiservice";
 import * as azure from "@pulumi/azure-native";
@@ -9,6 +10,49 @@ const azureClientId = config.require("azureClientId");
 const azureTenantId = config.require("azureTenantId");
 const azureSubscriptionId = config.require("azureSubscriptionId");
 const azureClientSecret = config.getSecret("azureClientSecret");
+const pulumiAccessToken = config.requireSecret("pulumiAccessToken");
+
+// ---------------------------------------------------------------------------
+// Resource hook: tag ESC environments with env=wksp after creation
+// ---------------------------------------------------------------------------
+
+const tagEnvWksp = new pulumi.ResourceHook("tag-env-wksp", async (args) => {
+  const https = require("https");
+  const org: string = args.newOutputs?.["organization"];
+  const project: string = args.newOutputs?.["project"];
+  const env: string = args.newOutputs?.["name"];
+  const token = process.env.PULUMI_ACCESS_TOKEN;
+
+  if (!org || !project || !env || !token) return;
+
+  const body = JSON.stringify({ value: "wksp" });
+  await new Promise<void>((resolve, reject) => {
+    const req = https.request(
+      {
+        hostname: "api.pulumi.com",
+        path: `/api/esc/environments/${org}/${project}/${env}/tags/env`,
+        method: "POST",
+        headers: {
+          Authorization: `token ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/vnd.pulumi+8",
+          "Content-Length": Buffer.byteLength(body),
+        },
+      },
+      (res: any) => {
+        let data = "";
+        res.on("data", (chunk: any) => (data += chunk));
+        res.on("end", () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) resolve();
+          else reject(new Error(`Pulumi API ${res.statusCode}: ${data}`));
+        });
+      },
+    );
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
+});
 
 // ---------------------------------------------------------------------------
 // ESC Environments
@@ -46,12 +90,16 @@ const azureCredentialsYaml = azureClientSecret
     ARM_SUBSCRIPTION_ID: \${azure.login.subscriptionId}
 `;
 
-const azureCredentialsEnv = new pulumiservice.Environment("azure-credentials", {
-  organization: orgName,
-  project: "workshop",
-  name: "azure-credentials",
-  yaml: azureCredentialsYaml,
-});
+const azureCredentialsEnv = new pulumiservice.Environment(
+  "azure-credentials",
+  {
+    organization: orgName,
+    project: "workshop",
+    name: "azure-credentials",
+    yaml: azureCredentialsYaml,
+  },
+  { hooks: { afterCreate: [tagEnvWksp] } },
+);
 
 const baseConfigEnv = new pulumiservice.Environment(
   "base-config",
@@ -69,7 +117,7 @@ values:
     name: base
 `),
   },
-  { dependsOn: azureCredentialsEnv },
+  { dependsOn: azureCredentialsEnv, hooks: { afterCreate: [tagEnvWksp] } },
 );
 
 // ---------------------------------------------------------------------------
@@ -156,7 +204,6 @@ const baseConfigApproval = new pulumiservice.ApprovalRule(
 // Webhook: create a Pulumi stack whenever a workshop/*-wksp env is created
 // ---------------------------------------------------------------------------
 
-const pulumiAccessToken = config.requireSecret("pulumiAccessToken");
 const webhookSecret = config.requireSecret("webhookSecret");
 
 const resourceGroup = new azure.resources.ResourceGroup("workshop-rg", {
