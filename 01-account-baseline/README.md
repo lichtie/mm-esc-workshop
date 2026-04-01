@@ -1,104 +1,8 @@
-# ESC Workshop
-
-This workshop walks you through using Pulumi ESC (Environments, Secrets, and Configuration) to manage Azure infrastructure. You will create a workspace environment, configure it with Azure credentials and settings, and trigger an automated deployment.
-
-## Prerequisites
-
-- Access to the Pulumi Cloud organization (`elisabeth-demo`)
-- Member of the `workspace-admins` team (or ask an admin to add you)
-- No local tools required — everything runs through Pulumi Cloud
-
----
-
-## Step 1: Create your workspace environment
-
-1. Go to [Pulumi Cloud](https://app.pulumi.com) → **ESC** → **Environments**
-2. Select the **workshop** project
-3. Click **New environment**
-4. Name it `<yourname>-wksp` (e.g. `alice-wksp`)
-5. Click **Create**
-
-> The baseline automation detects the new environment and automatically creates a matching Pulumi stack (`workshop/<yourname>`) with deployment settings pointed at this repository.
-
----
-
-## Step 2: Import the base config
-
-Open your environment in the editor and replace the contents with:
-
-```yaml
-imports:
-  - workshop/base-config
-
-values:
-  pulumiConfig:
-    name: <yourname>
-```
-
-This imports shared Azure credentials and base configuration (region, environment tag) and sets your resource name. Click **Save**.
-
----
-
-## Step 3: Set up approvals
-
-Require a review from the `workspace-admins` team before your environment can be opened.
-
-1. In your environment, go to **Settings** → **Approval policies**
-2. Click **Add policy**
-3. Set:
-   - **Target action**: Update
-   - **Approvals required**: 1
-   - **Allow self-approval**: No
-   - **Eligible approvers**: `workspace-admins` team
-4. Click **Save**
-
----
-
-## Step 4: Set up a deployment webhook
-
-Configure your stack to automatically deploy whenever the environment is updated.
-
-1. Go to **Pulumi Cloud** → **Stacks** → **workshop** → `<yourname>`
-2. Click **Settings** → **Deployments**
-3. Under **Triggers**, enable **Deploy on environment change**
-4. Save the settings
-
-From now on, every time you save a change to your `<yourname>-wksp` environment, a `pulumi update` will run automatically against your stack.
-
----
-
-## Step 5: Configure your environment
-
-Now add the remaining config values to fully specify your infrastructure. Update your environment YAML:
-
-```yaml
-imports:
-  - workshop/base-config
-
-values:
-  pulumiConfig:
-    name: <yourname>
-    storageAccountKind: StorageV2
-```
-
-Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it.
-
----
-
-## Step 6: Watch the deployment
-
-1. Go to **Stacks** → **workshop** → `<yourname>` → **Deployments**
-2. You should see a new deployment triggered by the environment update
-3. Watch the logs — it will create:
-   - An Azure Resource Group: `<yourname>-rg`
-   - An Azure Storage Account: `<yourname>storage`
-4. On success, the **Outputs** tab will show your `storageAccountName`
-
----
-
-## Baseline reference
+# Account Baseline
 
 The `01-account-baseline` Pulumi program provisions the shared infrastructure that powers this workshop. It is managed separately by workshop administrators.
+
+## Baseline reference
 
 ### What it sets up
 
@@ -110,6 +14,42 @@ The `01-account-baseline` Pulumi program provisions the shared infrastructure th
 | `workshop-participants` team | For granting participants scoped access |
 | Azure Function (`wksp-webhook-fn`) | Listens for `environment_created` events; creates stacks automatically |
 | Application Insights | Logging and monitoring for the webhook function |
+
+### Manual setup: custom roles and team permissions
+
+Custom roles require **Pulumi Enterprise or Business Critical**. All workshop stacks and environments are tagged `env: wksp` (applied automatically by the baseline and webhook). Custom roles use tag-based ABAC rules to match these resources.
+
+#### Create the `Workshop Admins` custom role
+
+1. Go to **Settings** → **Roles** → **Create role**
+2. Name: `Workshop Admins`
+3. Add a **Tag-Based** rule for **Environments**:
+   - Tag condition: `env` = `wksp`
+   - Permission: **Environment Admin**
+4. Add a **Tag-Based** rule for **Stacks**:
+   - Tag condition: `env` = `wksp`
+   - Permission: **Stack Admin**
+5. Add a **Global Entity Access** rule for **Environments**:
+   - Permission: **Environment Write** (grants ability to create new environments in any project)
+6. Save the role
+7. Go to **Settings** → **Teams** → `workspace-admins` → **Roles** → assign `Workshop Admins`
+
+#### Create the `Workshop Participants` custom role
+
+1. Go to **Settings** → **Roles** → **Create role**
+2. Name: `Workshop Participants`
+3. Add a **Tag-Based** rule for **Environments**:
+   - Tag condition: `env` = `wksp`
+   - Permission: **Environment Open** (allows importing and resolving environment values)
+4. Add a **Tag-Based** rule for **Stacks**:
+   - Tag condition: `env` = `wksp`
+   - Permission: **Stack Read**
+5. Add a **Global Entity Access** rule for **Environments**:
+   - Permission: **Environment Write** (grants ability to create their own `*-wksp` environment)
+6. Save the role
+7. Go to **Settings** → **Teams** → `workshop-participants` → **Roles** → assign `Workshop Participants`
+
+---
 
 ### How the automation works
 
