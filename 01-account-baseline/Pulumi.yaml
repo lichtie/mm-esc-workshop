@@ -1,0 +1,6 @@
+name: 01-account-baseline
+description: The account baseline for the Milliman ESC Training - Webhooks, Deployments, and Base Config setup
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
