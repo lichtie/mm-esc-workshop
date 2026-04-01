@@ -1,0 +1,8 @@
+{
+  "name": "00-stack-example",
+  "main": "index.ts",
+  "dependencies": {
+    "@pulumi/azure-native": "^3.16.0",
+    "@pulumi/pulumi": "^3.228.0"
+  }
+}
