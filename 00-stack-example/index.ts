@@ -17,7 +17,7 @@ const resourceGroup = new resources.ResourceGroup(`${name}-rg`, {
 });
 
 // Create an Azure Storage Account
-const storageAccount = new storage.StorageAccount(`${name}-sa`, {
+const storageAccount = new storage.StorageAccount(`${name}storage`, {
   resourceGroupName: resourceGroup.name,
   sku: {
     name: storage.SkuName.Standard_LRS,
