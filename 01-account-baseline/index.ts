@@ -1,4 +1,4 @@
-//TODO: test tagging and permissions structure
+//TODO: permissions structure
 import * as pulumi from "@pulumi/pulumi";
 import * as pulumiservice from "@pulumi/pulumiservice";
 import * as azure from "@pulumi/azure-native";
@@ -16,21 +16,28 @@ const pulumiAccessToken = config.requireSecret("pulumiAccessToken");
 // Resource hook: tag ESC environments with env=wksp after creation
 // ---------------------------------------------------------------------------
 
+const tokenPromise = new Promise<string>((resolve) => {
+  pulumiAccessToken.apply((t) => {
+    resolve(t);
+    return t;
+  });
+});
+
 const tagEnvWksp = new pulumi.ResourceHook("tag-env-wksp", async (args) => {
   const https = require("https");
   const org: string = args.newOutputs?.["organization"];
   const project: string = args.newOutputs?.["project"];
   const env: string = args.newOutputs?.["name"];
-  const token = process.env.PULUMI_ACCESS_TOKEN;
+  const token = await tokenPromise;
 
-  if (!org || !project || !env || !token) return;
+  if (!org || !project || !env) return;
 
-  const body = JSON.stringify({ value: "wksp" });
+  const body = JSON.stringify({ name: "env", value: "wksp" });
   await new Promise<void>((resolve, reject) => {
     const req = https.request(
       {
         hostname: "api.pulumi.com",
-        path: `/api/esc/environments/${org}/${project}/${env}/tags/env`,
+        path: `/api/esc/environments/${org}/${project}/${env}/tags`,
         method: "POST",
         headers: {
           Authorization: `token ${token}`,

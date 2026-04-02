@@ -183,10 +183,10 @@ function tagStack(org, project, stack, tagName, tagValue, token) {
 
 function tagEnvironment(org, project, env, tagName, tagValue, token) {
   return new Promise((resolve, reject) => {
-    const body = JSON.stringify({ value: tagValue });
+    const body = JSON.stringify({ name: tagName, value: tagValue });
     const options = {
       hostname: "api.pulumi.com",
-      path: `/api/esc/environments/${org}/${project}/${env}/tags/${encodeURIComponent(tagName)}`,
+      path: `/api/esc/environments/${org}/${project}/${env}/tags`,
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
