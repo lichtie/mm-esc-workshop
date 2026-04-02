@@ -71,10 +71,10 @@ Create both roles before running the program. The `pulumiAccessToken` used as a 
 2. Name: `Workshop Participants`
 3. Add a **Tag-Based** rule for **Environments**:
    - Tag condition: `env` = `wksp`
-   - Permission: **Environment Read** (allows importing and reading environment values)
+   - Permission: **Environment Open** (allows importing and reading environment values)
 4. Add a **Tag-Based** rule for **Stacks**:
    - Tag condition: `env` = `wksp`
-   - Permission: **Stack Read**
+   - Permission: **Stack Write**
 5. Set the **Organization Access** to **Standard**
 6. Save the role
 

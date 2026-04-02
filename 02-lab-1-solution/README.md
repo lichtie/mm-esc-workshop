@@ -74,3 +74,11 @@ values:
 ```
 
 Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it. If not, go watch the deployment update the name of your resource group and storage account name.
+
+---
+
+## Cleanup
+
+1. Go to your stack and click **Actions**, select the destroy option
+2. Go to **ESC** → **Environments** → `workshop/<yourname>-wksp`, click the three dots next to the save button. Select **Delete environment**
+3. Acknowledge the warning and delete
