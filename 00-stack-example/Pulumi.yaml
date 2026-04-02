@@ -4,8 +4,6 @@ runtime:
   name: nodejs
   options:
     packagemanager: npm
-config:
-  pulumi:tags:
-    value:
-      pulumi:template: azure-typescript
-      env: wksp
+pulumi:tags:
+  pulumi:template: azure-typescript
+  env: wksp

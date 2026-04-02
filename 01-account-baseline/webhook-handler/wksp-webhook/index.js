@@ -55,11 +55,8 @@ module.exports = async function (context, req) {
 
   try {
     await createStack(org, targetProject, stackName, token);
-    context.log(`Tagging stack and environment for stack ${stackName}`);
-    await Promise.all([
-      tagStack(org, targetProject, stackName, "env", "wksp", token),
-      tagEnvironment(org, "workshop", envName, "env", "wksp", token),
-    ]);
+    context.log(`Tagging environment for stack ${stackName}`);
+    await tagEnvironment(org, "workshop", envName, "env", "wksp", token);
     context.log(`Configuring environment for stack ${stackName}`);
     await setStackEnvironment(
       org,
@@ -150,36 +147,6 @@ function setStackEnvironment(org, project, stack, environment, token) {
   });
 }
 
-function tagStack(org, project, stack, tagName, tagValue, token) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify({ name: tagName, value: tagValue });
-    const options = {
-      hostname: "api.pulumi.com",
-      path: `/api/stacks/${org}/${project}/${stack}/tags`,
-      method: "POST",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/vnd.pulumi+8",
-        "Content-Length": Buffer.byteLength(body),
-      },
-    };
-    const req = https.request(options, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve();
-        } else {
-          reject(new Error(`Pulumi API ${res.statusCode}: ${data}`));
-        }
-      });
-    });
-    req.on("error", reject);
-    req.write(body);
-    req.end();
-  });
-}
 
 function tagEnvironment(org, project, env, tagName, tagValue, token) {
   return new Promise((resolve, reject) => {
