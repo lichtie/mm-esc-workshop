@@ -78,6 +78,12 @@ Create both roles before running the program. The `pulumiAccessToken` used as a 
 5. Set the **Organization Access** to **Standard**
 6. Save the role
 
+#### Set the default deployment role
+
+1. Go to **Settings** → **Access** → **Other**
+2. Under **Default Deployment Role**, select `Workshop Admins`
+3. Save
+
 ---
 
 ### Inputs (Pulumi config)

@@ -4,7 +4,7 @@ This lab walks you through creating a workspace environment, configuring it with
 
 ## Prerequisites
 
-- Access to the Pulumi Cloud organization (`elisabeth-demo`)
+- Access to the Pulumi Cloud organization
 - Member of the `workshop-participants` team (or ask an admin to add you)
 - No local tools required — everything runs through Pulumi Cloud
 
@@ -26,10 +26,12 @@ This lab walks you through creating a workspace environment, configuring it with
 
 Configure your stack to automatically deploy whenever the environment is updated.
 
-1. Go to **Pulumi Cloud** → **Stacks** → **workshop** → `<yourname>`
-2. Click **Settings** → **Deployments**
-3. Under **Triggers**, enable **Deploy on environment change**
-4. Save the settings
+1. Go to **Settings** → **Webhooks**
+2. Click **Create Webhook**
+3. Select **Deployment** as the **Destination**
+4. Provide a **Display Name** and select the created stack to deploy: `workshop/<yourname>`
+5. Under **Triggers**, enable **Environment revision created**
+6. Select **Create webhook**
 
 From now on, every time you save a change to your `<yourname>-wksp` environment, a `pulumi update` will run automatically against your stack.
 
@@ -55,7 +57,6 @@ Click **Save**. If you have approvals enabled, submit the change for review and 
 3. Watch the logs — it will create:
    - An Azure Resource Group: `base-rg`
    - An Azure Storage Account: `basestorage`
-4. On success, the **Outputs** tab will show your `storageAccountName`
 
 ---
 
@@ -72,4 +73,4 @@ values:
     name: <yourname>
 ```
 
-Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it. If not, go watch the deployment update the name
+Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it. If not, go watch the deployment update the name of your resource group and storage account name.
