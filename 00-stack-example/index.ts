@@ -7,7 +7,6 @@ const config = new pulumi.Config();
 const name = config.require("name");
 const region = config.require("region");
 const environment = config.require("environment");
-const storageAccountKind = config.require("storageAccountKind");
 
 const tags = { region, environment };
 
@@ -23,7 +22,7 @@ const storageAccount = new storage.StorageAccount(`${name}storage`, {
   sku: {
     name: storage.SkuName.Standard_LRS,
   },
-  kind: storageAccountKind,
+  kind: "StorageV2",
   tags,
 });
 

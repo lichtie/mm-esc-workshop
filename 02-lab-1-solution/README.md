@@ -13,48 +13,16 @@ This lab walks you through creating a workspace environment, configuring it with
 ## Step 1: Create your workspace environment
 
 1. Go to [Pulumi Cloud](https://app.pulumi.com) → **ESC** → **Environments**
-2. Select the **workshop** project
-3. Click **New environment**
+2. Select the **Create Environment**
+3. Set the project name to `workshop`
 4. Name it `<yourname>-wksp` (e.g. `alice-wksp`)
-5. Click **Create**
+5. Click **Create Environment**
 
 > The baseline automation detects the new environment and automatically creates a matching Pulumi stack (`workshop/<yourname>`) with deployment settings pointed at this repository.
 
 ---
 
-## Step 2: Import the base config
-
-Open your environment in the editor and replace the contents with:
-
-```yaml
-imports:
-  - workshop/base-config
-
-values:
-  pulumiConfig:
-    name: <yourname>
-```
-
-This imports shared Azure credentials and base configuration (region, environment tag) and sets your resource name. Click **Save**.
-
----
-
-## Step 3: Set up approvals
-
-Require a review from the `workspace-admins` team before your environment can be opened.
-
-1. In your environment, go to **Settings** → **Approval policies**
-2. Click **Add policy**
-3. Set:
-   - **Target action**: Update
-   - **Approvals required**: 1
-   - **Allow self-approval**: No
-   - **Eligible approvers**: `workspace-admins` team
-4. Click **Save**
-
----
-
-## Step 4: Set up a deployment webhook
+## Step 2: Set up a deployment webhook
 
 Configure your stack to automatically deploy whenever the environment is updated.
 
@@ -67,9 +35,33 @@ From now on, every time you save a change to your `<yourname>-wksp` environment,
 
 ---
 
-## Step 5: Configure your environment
+## Step 3: Configure your environment
 
-Now add the remaining config values to fully specify your infrastructure. Update your environment YAML:
+Now import the base environment to pull in the default values. Update your environment YAML:
+
+```yaml
+imports:
+  - workshop/base-config
+```
+
+Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it.
+
+---
+
+## Step 4: Watch the deployment
+
+1. Go to **Stacks** → **workshop** → `<yourname>` → **Deployments**
+2. You should see a new deployment triggered by the environment update
+3. Watch the logs — it will create:
+   - An Azure Resource Group: `base-rg`
+   - An Azure Storage Account: `basestorage`
+4. On success, the **Outputs** tab will show your `storageAccountName`
+
+---
+
+## Step 5: Update your environment
+
+Now add the config values to fully specify your infrastructure. Update your environment YAML:
 
 ```yaml
 imports:
@@ -78,18 +70,6 @@ imports:
 values:
   pulumiConfig:
     name: <yourname>
-    storageAccountKind: StorageV2
 ```
 
-Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it.
-
----
-
-## Step 6: Watch the deployment
-
-1. Go to **Stacks** → **workshop** → `<yourname>` → **Deployments**
-2. You should see a new deployment triggered by the environment update
-3. Watch the logs — it will create:
-   - An Azure Resource Group: `<yourname>-rg`
-   - An Azure Storage Account: `<yourname>storage`
-4. On success, the **Outputs** tab will show your `storageAccountName`
+Click **Save**. If you have approvals enabled, submit the change for review and have a team member approve it. If not, go watch the deployment update the name
