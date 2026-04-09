@@ -1,4 +1,4 @@
-name: challenge-01
+name: ctfwksp
 description: Service config stack for challenge 01
 runtime:
   name: nodejs
