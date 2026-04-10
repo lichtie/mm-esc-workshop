@@ -1,0 +1,6 @@
+name: ctfwksp
+description: Infra stack for challenge 04 - dev environment
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
