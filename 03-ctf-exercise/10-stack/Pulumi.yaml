@@ -1,0 +1,6 @@
+name: ctfwksp
+description: Stack for challenge 10
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm

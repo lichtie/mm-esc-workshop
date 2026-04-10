@@ -1,0 +1,7 @@
+{
+  "name": "10-partner-ips",
+  "main": "index.ts",
+  "dependencies": {
+    "@pulumi/pulumi": "^3.228.0"
+  }
+}

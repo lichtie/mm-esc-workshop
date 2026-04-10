@@ -1,0 +1,7 @@
+{
+  "name": "10-vpn-ips",
+  "main": "index.ts",
+  "dependencies": {
+    "@pulumi/pulumi": "^3.228.0"
+  }
+}
