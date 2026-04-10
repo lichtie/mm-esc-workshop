@@ -1,3 +1,4 @@
 **/Pulumi.*.yaml
 03-ctf-exercise-baseline
 **/node_modules/
+**.pptx
