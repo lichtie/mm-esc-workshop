@@ -1,4 +1,4 @@
-name: challenge-02
+name: ctfwksp
 description: Stack for challenge 02
 runtime:
   name: nodejs
