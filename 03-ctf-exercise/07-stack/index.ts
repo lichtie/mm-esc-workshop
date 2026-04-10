@@ -6,7 +6,7 @@ const appName = config.require("name");
 const region = config.require("region");
 
 if (appName === "workshop-app") {
-    throw new Error(`App name was not overridden: ${appName}`);
+    throw new Error(`Unexpected app name: ${appName}`);
 }
 
 export const serviceEndpoint = `${appName}.${region}.internal`;
