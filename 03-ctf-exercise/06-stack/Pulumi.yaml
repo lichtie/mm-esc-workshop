@@ -1,6 +1,0 @@
-name: ctfwksp
-description: Stack for challenge 06
-runtime:
-  name: nodejs
-  options:
-    packagemanager: npm

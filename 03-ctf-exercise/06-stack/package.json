@@ -1,7 +1,0 @@
-{
-  "name": "challenge-06",
-  "main": "index.ts",
-  "dependencies": {
-    "@pulumi/pulumi": "^3.228.0"
-  }
-}
