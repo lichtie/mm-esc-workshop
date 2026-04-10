@@ -1,4 +1,4 @@
-name: challenge-06
+name: ctfwksp
 description: Stack for challenge 06
 runtime:
   name: nodejs
