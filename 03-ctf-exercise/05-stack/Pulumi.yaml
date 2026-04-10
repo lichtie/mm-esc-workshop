@@ -1,0 +1,6 @@
+name: challenge-05
+description: Stack for challenge 05
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm

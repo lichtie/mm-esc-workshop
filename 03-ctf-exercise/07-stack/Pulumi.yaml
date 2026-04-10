@@ -1,0 +1,6 @@
+name: challenge-07
+description: Stack for challenge 07
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
