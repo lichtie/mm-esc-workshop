@@ -7,5 +7,3 @@ runtime:
 pulumi:tags:
   pulumi:template: azure-typescript
   env: wksp
-environment:
-  - workshop/azure-credentials
