@@ -2,8 +2,8 @@
   "name": "01-account-baseline",
   "main": "index.ts",
   "dependencies": {
+    "@pulumi/azure-native": "^3.17.0",
     "@pulumi/pulumi": "^3.228.0",
-    "@pulumi/pulumiservice": "^0.36.0",
-    "@pulumi/azure-native": "^3.16.0"
+    "@pulumi/pulumiservice": "^0.36.0"
   }
 }
